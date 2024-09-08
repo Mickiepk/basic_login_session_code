@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Login</h1>
+    <form id="loginForm">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      <button type="submit">Login</button>
+    </form>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    // JavaScript to handle form submission
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Prevent the default form submission
+
+      const email = document.getElementById('email').value;
+
+      // Send the email to the backend via POST request
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email })
+      });
+
+      const data = await response.json();
+
+      // If login is successful, redirect to welcome page
+      if (data.message.includes('Welcome')) {
+        const firstName = data.first_name;
+        const lastName = data.last_name;
+        // Redirect to the welcome page and pass first and last name via URL parameters
+        window.location.href = `welcome.html?firstName=${firstName}&lastName=${lastName}`;
+      } else {
+        // Display the error message
+        const messageElement = document.getElementById('message');
+        messageElement.style.color = 'red';
+        messageElement.textContent = data.message;
+      }
+    });
+  </script>
+</body>
+</html>
